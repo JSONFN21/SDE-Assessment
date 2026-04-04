@@ -29,6 +29,6 @@ Assuming you have already run git init locally:<br>
     - When to do this: first setup and whenever new migrations exist
 
 - go back to root (../..)
-- run npm run dev:frontend to start frontend
-- in a second terminal (from root), run npm run dev:backend to start backend
+- run "npm run dev:frontend" to start frontend
+- in a second terminal (from root), run "npm run dev:backend" to start backend
     - Keep both terminals running while developing
