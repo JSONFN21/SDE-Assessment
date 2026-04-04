@@ -1,114 +1,34 @@
-## TaskBoard - Simple Setup Guide
+# Todo App Project Setup
+Frontend: http://localhost:5173<br>
+Backend:  http://localhost:5000<br>
+Postgres: localhost:5432<br>
 
-This project is a team task board.
-Think of it like a shared to-do app where:
+## Prereqs
+- Node.js, npm, git, docker desktop
+- Docker Desktop should be open before running DB commands
 
-- each person has a personal board,
-- teams can have shared boards,
-- tasks can have comments and subtasks,
-- and you can track who did what.
+## Connect to local repo
+Assuming you have already run git init locally:<br>
+- git remote add origin https://github.com/jeannamatthews-classes/group-project-emr-pa.git<br>
+- git pull origin main
+- git checkout main
+- npm install
 
-## Before you start (requirements)
+### start up project
+- npm run db:up (starts Postgres container)
+    - When to do this: at the start of each dev session if DB is not already running
 
-Make sure these are installed first:
+- Create a .env file in apps/backend and copy values from .env.template
+    - When to do this: first-time setup only (or whenever env values change)
+    - .env should never be pushed to github, always push template only
 
-1. **Node.js** (recommended: version 20 or newer)
-2. **npm** (comes with Node.js)
-3. **Docker Desktop** (must be running before `npm run db:up`)
-4. **Git** (optional, but helpful for cloning and version control)
+- navigate to apps/backend
+- run npx prisma generate
+    - When to do this: first setup and after schema changes
+- run npm run prisma:migrate
+    - When to do this: first setup and whenever new migrations exist
 
-
-## What is in this project?
-
-There are 3 main parts:
-
-1. Frontend (what you see in the browser)
-2. Backend (the API that handles login, tasks, teams, and permissions)
-3. Database (PostgreSQL, where all data is stored)
-
-In this repo:
-
-- `apps/frontend` = the website (React + Vite)
-- `apps/backend` = the server (Express + Prisma)
-- `docker-compose.yml` = starts the local PostgreSQL database
-
-## What can the app do?
-
-- Register and log in users
-- Create personal tasks
-- Create teams and invite members
-- Create shared team tasks
-- Add comments on tasks
-- Add subtasks on tasks
-- Show usernames for team actions (for example, who posted a comment)
-- Move tasks across columns (To Do, In Progress, In Review, Done)
-
-## Setup
-
-Imagine this is your first time opening the project.
-Here is the exact order to run things.
-
-### Step 1: Install packages
-
-```bash
-npm install
-```
-
-This downloads everything both frontend and backend need.
-
-### Step 2: Start the database
-
-```bash
-npm run db:up
-```
-
-Now PostgreSQL is running in Docker.
-
-### Step 3: Create/update database tables
-
-```bash
-npm run prisma:migrate -w apps/backend
-npm run prisma:generate
-```
-
-First command applies database changes.
-Second command updates Prisma client code used by the backend.
-
-### Step 4: Start backend server
-
-Open terminal #1:
-
-```bash
-npm run dev:backend
-```
-
-Backend should run on:
-
-- `http://localhost:5000`
-
-You can test it quickly:
-
-- `http://localhost:5000/health`
-
-### Step 5: Start frontend app
-
-Open terminal #2:
-
-```bash
-npm run dev:frontend
-```
-
-Usually frontend runs on:
-
-- `http://localhost:5173`
-
-
-## Common commands
-
-- Start backend: `npm run dev:backend`
-- Start frontend: `npm run dev:frontend`
-- Frontend lint + build check: `npm run verify:frontend`
-- Stop database: `npm run db:down`
-- Reset database (delete all local data): `npm run db:reset`
-
-
+- go back to root (../..)
+- run npm run dev:frontend to start frontend
+- in a second terminal (from root), run npm run dev:backend to start backend
+    - Keep both terminals running while developing
