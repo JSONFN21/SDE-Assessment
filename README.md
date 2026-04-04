@@ -23,9 +23,9 @@ Assuming you have already run git init locally:<br>
     - .env should never be pushed to github, always push template only
 
 - navigate to apps/backend
-- run npx prisma generate
+- run "npx prisma generate"
     - When to do this: first setup and after schema changes
-- run npm run prisma:migrate
+- run "npm run prisma:migrate"
     - When to do this: first setup and whenever new migrations exist
 
 - go back to root (../..)
