@@ -8,6 +8,15 @@ Think of it like a shared to-do app where:
 - tasks can have comments and subtasks,
 - and you can track who did what.
 
+## Before you start (requirements)
+
+Make sure these are installed first:
+
+1. **Node.js** (recommended: version 20 or newer)
+2. **npm** (comes with Node.js)
+3. **Docker Desktop** (must be running before `npm run db:up`)
+4. **Git** (optional, but helpful for cloning and version control)
+
 
 ## What is in this project?
 
