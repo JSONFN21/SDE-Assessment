@@ -9,7 +9,7 @@ Postgres: localhost:5432<br>
 
 ## Connect to local repo
 Assuming you have already run git init locally:<br>
-- git remote add origin https://github.com/jeannamatthews-classes/group-project-emr-pa.git<br>
+- git remote add origin https://github.com/JSONFN21/SDE-Assessment.git<br>
 - git pull origin main
 - git checkout main
 - npm install
