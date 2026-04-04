@@ -43,7 +43,7 @@ In this repo:
 - Show usernames for team actions (for example, who posted a comment)
 - Move tasks across columns (To Do, In Progress, In Review, Done)
 
-## Setup story: from zero to running app
+## Setup
 
 Imagine this is your first time opening the project.
 Here is the exact order to run things.
@@ -103,7 +103,7 @@ Usually frontend runs on:
 - `http://localhost:5173`
 
 
-## Everyday commands
+## Common commands
 
 - Start backend: `npm run dev:backend`
 - Start frontend: `npm run dev:frontend`
