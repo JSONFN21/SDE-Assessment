@@ -102,8 +102,6 @@ Usually frontend runs on:
 
 - `http://localhost:5173`
 
-If 5173 is busy, Vite may choose another port like 5174, 5175, or 5177.
-Use the URL printed in the terminal.
 
 ## Everyday commands
 
