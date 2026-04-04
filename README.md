@@ -104,26 +104,4 @@ Use the URL printed in the terminal.
 - Stop database: `npm run db:down`
 - Reset database (delete all local data): `npm run db:reset`
 
-## Quick troubleshooting
 
-### "Frontend won’t start"
-
-Most of the time it is a port conflict.
-Close old frontend terminals and run again.
-
-### "Backend changed but behavior is old"
-
-Restart backend after schema/client changes:
-
-```bash
-npm run prisma:generate
-npm run dev:backend
-```
-
-### "I changed schema and now things fail"
-
-Run migrations again:
-
-```bash
-npm run prisma:migrate -w apps/backend
-```
