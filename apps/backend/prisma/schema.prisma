@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TeamRole {
+  OWNER
+  MEMBER
+  VIEWER
+}
+
+model User {
+  id              String        @id @default(uuid())
+  username        String        @unique
+  email           String        @unique
+  password        String
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  tasks           Task[]
+  ownedTeams      Team[]        @relation("TeamOwner")
+  teamMemberships TeamMember[]
+  taskComments    TaskComment[]
+  createdSubtasks Subtask[]     @relation("SubtaskCreatedBy")
+  updatedSubtasks Subtask[]     @relation("SubtaskUpdatedBy")
+}
+
+model Team {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User         @relation("TeamOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     TeamMember[]
+  tasks       Task[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([ownerId, name])
+}
+
+model TeamMember {
+  id        String    @id @default(uuid())
+  teamId    String
+  userId    String
+  role      TeamRole  @default(MEMBER)
+  team      Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([teamId, userId])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  status      String    @default("todo")
+  priority    String    @default("normal")
+  dueDate     DateTime?
+  labels      String[]  @default([])
+  assignees   String[]  @default([])
+  userId      String
+  teamId      String?
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team        Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  comments    TaskComment[]
+  subtasks    Subtask[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model TaskComment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  content   String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subtask {
+  id          String   @id @default(uuid())
+  taskId      String
+  title       String
+  completed   Boolean  @default(false)
+  createdById String?
+  updatedById String?
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdBy   User?    @relation("SubtaskCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy   User?    @relation("SubtaskUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
