@@ -237,7 +237,7 @@ export default function BoardPage() {
             direction={{ xs: 'column', sm: 'row' }}
             spacing={1.5}
             alignItems={{ xs: 'flex-start', sm: 'center' }}
-            sx={{ minWidth: 0 }}
+            sx={{ minWidth: 0, flexWrap: 'wrap' }}
           >
             <Typography variant="h6" fontWeight={800} color="primary">
               TaskBoard
@@ -246,6 +246,37 @@ export default function BoardPage() {
               <Chip label={`${total} total`} size="small" variant="outlined" />
               <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
               {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              sx={{ minWidth: 0 }}
+            >
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  display: 'grid',
+                  placeItems: 'center',
+                  bgcolor: '#e0f2fe',
+                  border: '1px solid #bae6fd',
+                  fontSize: 18,
+                  flexShrink: 0,
+                }}
+              >
+                {profileEmoji}
+              </Box>
+              <Typography
+                variant="body2"
+                fontWeight={700}
+                color="text.primary"
+                sx={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {currentUser?.username ?? 'TaskBoard'}
+              </Typography>
             </Stack>
           </Stack>
 
@@ -321,42 +352,6 @@ export default function BoardPage() {
               >
                 Logout
               </Button>
-            </Stack>
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{
-                minWidth: 0,
-                flex: { xs: '1 1 100%', sm: '0 1 auto' },
-                justifyContent: { xs: 'flex-start', sm: 'flex-end' },
-                ml: { sm: 0.5 },
-              }}
-            >
-              <Box
-                aria-hidden="true"
-                sx={{
-                  width: 34,
-                  height: 34,
-                  borderRadius: '50%',
-                  display: 'grid',
-                  placeItems: 'center',
-                  bgcolor: '#e0f2fe',
-                  border: '1px solid #bae6fd',
-                  fontSize: 18,
-                  flexShrink: 0,
-                }}
-              >
-                {profileEmoji}
-              </Box>
-              <Typography
-                variant="body2"
-                fontWeight={700}
-                color="text.primary"
-                sx={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              >
-                {currentUser?.username ?? 'TaskBoard'}
-              </Typography>
             </Stack>
           </Stack>
         </Toolbar>
