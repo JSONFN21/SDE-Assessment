@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   Box,
   Button,
   Chip,
@@ -120,9 +121,9 @@ export default function TeamManagerDialog({
       <DialogContent>
         <Stack spacing={3}>
           {error && (
-            <Typography color="error" variant="body2" sx={{ background: '#fef2f2', p: 1.5, borderRadius: 2 }}>
+            <Alert severity="error" sx={{ borderRadius: 2 }}>
               {error}
-            </Typography>
+            </Alert>
           )}
 
           <Box>
@@ -218,13 +219,21 @@ export default function TeamManagerDialog({
                 {members.map(member => (
                   <ListItem
                     key={member.id}
-                    sx={{ px: 0, display: 'flex', justifyContent: 'space-between', gap: 2, alignItems: 'center' }}
+                    sx={{
+                      px: 0,
+                      py: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: 2,
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      flexDirection: { xs: 'column', sm: 'row' },
+                    }}
                   >
                     <Box>
                       <Typography fontWeight={600}>{member.user.username}</Typography>
                       <Typography variant="body2" color="text.secondary">{member.user.email}</Typography>
                     </Box>
-                    <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
                       {canManageSelectedTeam && member.role !== 'OWNER' ? (
                         <TextField
                           select

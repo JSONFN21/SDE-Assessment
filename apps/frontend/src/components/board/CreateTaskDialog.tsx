@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Stack, MenuItem, Chip, Box, Typography,
+  TextField, Button, Stack, MenuItem, Chip, Box, Typography, Alert,
   IconButton, Autocomplete,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -91,9 +91,9 @@ export default function CreateTaskDialog({ open, defaultStatus = 'todo', teamId 
       <DialogContent>
         <Stack spacing={2.5} sx={{ pt: 1 }}>
           {error && (
-            <Typography color="error" variant="body2" sx={{ background: '#fef2f2', p: 1.5, borderRadius: 2 }}>
+            <Alert severity="error" sx={{ borderRadius: 2 }}>
               {error}
-            </Typography>
+            </Alert>
           )}
           <TextField
             label="Title"
@@ -112,7 +112,7 @@ export default function CreateTaskDialog({ open, defaultStatus = 'todo', teamId 
             rows={3}
             size="small"
           />
-          <Stack direction="row" spacing={2}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
               select
               label="Status"
@@ -152,7 +152,7 @@ export default function CreateTaskDialog({ open, defaultStatus = 'todo', teamId 
             renderInput={(params) => <TextField {...params} label="Assign Team Members" placeholder="Select members" />}
           />
           <Box>
-            <Stack direction="row" spacing={1} mb={1}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} mb={1}>
               <TextField
                 label="Add Label"
                 value={labelInput}
@@ -161,7 +161,7 @@ export default function CreateTaskDialog({ open, defaultStatus = 'todo', teamId 
                 size="small"
                 sx={{ flex: 1 }}
               />
-              <Button variant="outlined" onClick={addLabel} size="small" sx={{ minWidth: 36, px: 1 }}>
+              <Button variant="outlined" onClick={addLabel} size="small" sx={{ minWidth: { xs: '100%', sm: 36 }, px: 1 }}>
                 <AddIcon fontSize="small" />
               </Button>
             </Stack>

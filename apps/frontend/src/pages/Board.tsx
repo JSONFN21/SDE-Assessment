@@ -1,9 +1,19 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
 import {
-  AppBar, Box, Button, CircularProgress, InputAdornment,
-  Stack, TextField, Toolbar, Typography, Chip, Alert, MenuItem,
+  Alert,
+  AppBar,
+  Box,
+  Button,
+  Chip,
+  CircularProgress,
+  InputAdornment,
+  MenuItem,
+  Stack,
+  TextField,
+  Toolbar,
+  Typography,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
@@ -13,8 +23,14 @@ import CreateTaskDialog from '../components/board/CreateTaskDialog';
 import TaskDetailDialog from '../components/board/TaskDetailDialog';
 import TeamManagerDialog from '../components/board/TeamManagerDialog';
 import {
-  fetchTasks, createTask, updateTask, deleteTask,
-  type Task, type TaskStatus, type CreateTaskInput, type UpdateTaskInput,
+  createTask,
+  deleteTask,
+  fetchTasks,
+  updateTask,
+  type CreateTaskInput,
+  type Task,
+  type TaskStatus,
+  type UpdateTaskInput,
 } from '../services/tasksApi';
 import { getMe, getTeamMembers, type AuthUser } from '../services/authApi';
 import {
@@ -24,10 +40,10 @@ import {
   fetchTeamMembers,
   fetchTeams,
   removeTeamMember,
+  updateTeamMember,
   type Team,
   type TeamMember,
   type TeamRole,
-  updateTeamMember,
 } from '../services/teamsApi';
 
 const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'in_review', 'done'];
@@ -71,10 +87,11 @@ export default function BoardPage() {
             ? getTeamMembers(token).then(response => response.users)
             : Promise.resolve([] as AuthUser[]),
       ]);
+
       setTasks(taskData);
       setTeams(teamData);
       setCurrentUser(meResponse?.user ?? null);
-      setSelectedTeamMembers(selectedTeamId ? members as TeamMember[] : []);
+      setSelectedTeamMembers(selectedTeamId ? (members as TeamMember[]) : []);
       setTeamMembers(
         selectedTeamId
           ? (members as TeamMember[]).map(member => member.user)
@@ -89,7 +106,9 @@ export default function BoardPage() {
     }
   }, [selectedTeamId]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const handleLogout = () => {
     localStorage.removeItem('auth_token');
@@ -102,10 +121,10 @@ export default function BoardPage() {
     if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
     const newStatus = destination.droppableId as TaskStatus;
-    setTasks(prev => prev.map(t => t.id === draggableId ? { ...t, status: newStatus } : t));
+    setTasks(prev => prev.map(task => (task.id === draggableId ? { ...task, status: newStatus } : task)));
     try {
       const updated = await updateTask(draggableId, { status: newStatus });
-      setTasks(prev => prev.map(task => task.id === draggableId ? updated : task));
+      setTasks(prev => prev.map(task => (task.id === draggableId ? updated : task)));
       if (editTask?.id === draggableId) {
         setEditTask(updated);
       }
@@ -121,18 +140,18 @@ export default function BoardPage() {
 
   const handleUpdate = async (id: string, input: UpdateTaskInput) => {
     const updated = await updateTask(id, input);
-    setTasks(prev => prev.map(t => t.id === id ? updated : t));
+    setTasks(prev => prev.map(task => (task.id === id ? updated : task)));
     setEditTask(updated);
     return updated;
   };
 
   const handleDelete = async (id: string) => {
     await deleteTask(id);
-    setTasks(prev => prev.filter(t => t.id !== id));
+    setTasks(prev => prev.filter(task => task.id !== id));
   };
 
   const handleTaskChange = (task: Task) => {
-    setTasks(prev => prev.map(item => item.id === task.id ? task : item));
+    setTasks(prev => prev.map(item => (item.id === task.id ? task : item)));
     setEditTask(task);
   };
 
@@ -166,22 +185,25 @@ export default function BoardPage() {
     await load();
   };
 
-  const allLabels = [...new Set(tasks.flatMap(t => (Array.isArray(t.labels) ? t.labels : [])))];
+  const allLabels = [...new Set(tasks.flatMap(task => (Array.isArray(task.labels) ? task.labels : [])))];
 
-  const filtered = tasks.filter(t => {
-    const labels = Array.isArray(t.labels) ? t.labels : [];
-    const title = typeof t.title === 'string' ? t.title : '';
-    const description = typeof t.description === 'string' ? t.description : '';
-    const matchSearch = !search || title.toLowerCase().includes(search.toLowerCase()) || description.toLowerCase().includes(search.toLowerCase());
+  const filtered = tasks.filter(task => {
+    const labels = Array.isArray(task.labels) ? task.labels : [];
+    const title = typeof task.title === 'string' ? task.title : '';
+    const description = typeof task.description === 'string' ? task.description : '';
+    const matchSearch =
+      !search ||
+      title.toLowerCase().includes(search.toLowerCase()) ||
+      description.toLowerCase().includes(search.toLowerCase());
     const matchLabel = !filterLabel || labels.includes(filterLabel);
     return matchSearch && matchLabel;
   });
 
   const total = tasks.length;
-  const completed = tasks.filter(t => t.status === 'done').length;
-  const overdue = tasks.filter(t => {
-    if (!t.dueDate || t.status === 'done') return false;
-    const dueDate = parseDueDate(t.dueDate);
+  const completed = tasks.filter(task => task.status === 'done').length;
+  const overdue = tasks.filter(task => {
+    if (!task.dueDate || task.status === 'done') return false;
+    const dueDate = parseDueDate(task.dueDate);
     if (!dueDate) return false;
     return dueDate < new Date(new Date().toDateString());
   }).length;
@@ -189,56 +211,114 @@ export default function BoardPage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static" color="default" elevation={0} sx={{ bgcolor: '#fff', borderBottom: '1px solid #e2e8f0' }}>
-        <Toolbar sx={{ gap: 2 }}>
-          <Typography variant="h6" fontWeight={800} color="primary" sx={{ flexGrow: 0 }}>
-            TaskBoard
-          </Typography>
-          <Stack direction="row" spacing={2} sx={{ ml: 2 }}>
-            <Chip label={`${total} total`} size="small" variant="outlined" />
-            <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
-            {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
-          </Stack>
-          <Box sx={{ flex: 1 }} />
-          <TextField
-            select
-            size="small"
-            value={selectedTeamId ?? '__personal__'}
-            onChange={event => setSelectedTeamId(event.target.value === '__personal__' ? null : event.target.value)}
-            sx={{ minWidth: 180 }}
+        <Toolbar
+          sx={{
+            gap: 2,
+            alignItems: { xs: 'stretch', md: 'center' },
+            flexWrap: 'wrap',
+            px: { xs: 2, sm: 3 },
+            py: { xs: 1.5, md: 1 },
+          }}
+        >
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1.5}
+            alignItems={{ xs: 'flex-start', sm: 'center' }}
+            sx={{ minWidth: 0 }}
           >
-            <MenuItem value="__personal__">Personal Board</MenuItem>
-            {teams.map(team => (
-              <MenuItem key={team.id} value={team.id}>{team.name}</MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            size="small"
-            placeholder="Search tasks…"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            sx={{ width: 220 }}
-            slotProps={{
-              input: {
-                startAdornment: <InputAdornment position="start"><SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} /></InputAdornment>,
-              },
+            <Typography variant="h6" fontWeight={800} color="primary">
+              TaskBoard
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Chip label={`${total} total`} size="small" variant="outlined" />
+              <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
+              {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
+            </Stack>
+          </Stack>
+
+          <Box sx={{ flex: { xs: '1 1 100%', md: 1 } }} />
+
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={1.25}
+            sx={{
+              width: { xs: '100%', xl: 'auto' },
+              alignItems: { xs: 'stretch', sm: 'center' },
+              justifyContent: { md: 'flex-end' },
+              flexWrap: 'wrap',
             }}
-          />
-          <Button variant="contained" size="small" startIcon={<AddIcon />} onClick={() => setCreateDialogStatus('todo')}>
-            New Task
-          </Button>
-          <Button variant="outlined" size="small" onClick={() => setTeamsDialogOpen(true)}>
-            Teams
-          </Button>
-          <Button variant="outlined" size="small" startIcon={<LogoutIcon />} onClick={handleLogout} color="inherit">
-            Logout
-          </Button>
+          >
+            <TextField
+              select
+              size="small"
+              value={selectedTeamId ?? '__personal__'}
+              onChange={event => setSelectedTeamId(event.target.value === '__personal__' ? null : event.target.value)}
+              sx={{ minWidth: { xs: '100%', sm: 220 }, flex: { sm: '0 0 auto' } }}
+            >
+              <MenuItem value="__personal__">Personal Board</MenuItem>
+              {teams.map(team => (
+                <MenuItem key={team.id} value={team.id}>
+                  {team.name}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <TextField
+              size="small"
+              placeholder="Search tasks..."
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              sx={{ width: { xs: '100%', sm: 260 }, flex: { sm: '1 1 260px' } }}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ width: { xs: '100%', sm: 'auto' } }}>
+              <Button
+                variant="contained"
+                size="small"
+                startIcon={<AddIcon />}
+                onClick={() => setCreateDialogStatus('todo')}
+                sx={{ flex: { xs: 1, sm: '0 0 auto' } }}
+              >
+                New Task
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                onClick={() => setTeamsDialogOpen(true)}
+                sx={{ flex: { xs: 1, sm: '0 0 auto' } }}
+              >
+                Teams
+              </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<LogoutIcon />}
+                onClick={handleLogout}
+                color="inherit"
+                sx={{ flex: { xs: 1, sm: '0 0 auto' } }}
+              >
+                Logout
+              </Button>
+            </Stack>
+          </Stack>
         </Toolbar>
       </AppBar>
 
       {allLabels.length > 0 && (
-        <Box sx={{ px: 3, py: 1, borderBottom: '1px solid #e2e8f0', bgcolor: '#fff' }}>
-          <Stack direction="row" spacing={1} flexWrap="wrap" alignItems="center">
-            <Typography variant="caption" color="text.secondary" fontWeight={600}>Labels:</Typography>
+        <Box sx={{ px: { xs: 2, sm: 3 }, py: 1, borderBottom: '1px solid #e2e8f0', bgcolor: '#fff' }}>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap alignItems="center">
+            <Typography variant="caption" color="text.secondary" fontWeight={600}>
+              Labels:
+            </Typography>
             <Chip
               label="All"
               size="small"
@@ -246,42 +326,72 @@ export default function BoardPage() {
               color={filterLabel === null ? 'primary' : 'default'}
               variant={filterLabel === null ? 'filled' : 'outlined'}
             />
-            {allLabels.map(l => (
+            {allLabels.map(label => (
               <Chip
-                key={l}
-                label={l}
+                key={label}
+                label={label}
                 size="small"
-                onClick={() => setFilterLabel(filterLabel === l ? null : l)}
-                color={filterLabel === l ? 'primary' : 'default'}
-                variant={filterLabel === l ? 'filled' : 'outlined'}
+                onClick={() => setFilterLabel(filterLabel === label ? null : label)}
+                color={filterLabel === label ? 'primary' : 'default'}
+                variant={filterLabel === label ? 'filled' : 'outlined'}
               />
             ))}
           </Stack>
         </Box>
       )}
 
-      <Box sx={{ flex: 1, overflowX: 'auto', p: 3 }}>
-        {error && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>{error}</Alert>}
+      <Box sx={{ flex: 1, overflowX: 'auto', px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3 } }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
 
         {loading ? (
           <Stack alignItems="center" justifyContent="center" sx={{ height: 300 }}>
             <CircularProgress />
-            <Typography variant="body2" color="text.secondary" mt={2}>Loading your board…</Typography>
+            <Typography variant="body2" color="text.secondary" mt={2}>
+              Loading your board...
+            </Typography>
           </Stack>
         ) : (
           <DragDropContext onDragEnd={handleDragEnd}>
-            <Stack direction="row" spacing={2.5} alignItems="flex-start" sx={{ minWidth: 'max-content' }}>
-              {COLUMNS.map(col => (
+            <Stack
+              direction="row"
+              spacing={{ xs: 1.5, sm: 2.5 }}
+              alignItems="flex-start"
+              sx={{ minWidth: 'max-content', pb: 1 }}
+            >
+              {COLUMNS.map(column => (
                 <BoardColumn
-                  key={col}
-                  status={col}
-                  tasks={filtered.filter(t => t.status === col)}
-                  onAddTask={s => setCreateDialogStatus(s)}
-                  onTaskClick={t => setEditTask(t)}
+                  key={column}
+                  status={column}
+                  tasks={filtered.filter(task => task.status === column)}
+                  onAddTask={status => setCreateDialogStatus(status)}
+                  onTaskClick={task => setEditTask(task)}
                 />
               ))}
             </Stack>
           </DragDropContext>
+        )}
+        {!loading && !error && filtered.length === 0 && (
+          <Box
+            sx={{
+              mt: 2,
+              p: 3,
+              borderRadius: 3,
+              bgcolor: '#fff',
+              border: '1px dashed #cbd5e1',
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h6" fontWeight={700} gutterBottom>
+              No tasks match this view yet
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Create a task, switch boards, or clear your search and label filters to see more work.
+            </Typography>
+          </Box>
         )}
       </Box>
 

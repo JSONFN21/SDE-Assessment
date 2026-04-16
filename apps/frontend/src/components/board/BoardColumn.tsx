@@ -24,7 +24,7 @@ export default function BoardColumn({ status, tasks, onAddTask, onTaskClick }: P
   return (
     <Box
       sx={{
-        width: 280,
+        width: { xs: 'min(82vw, 320px)', sm: 300, lg: 320 },
         flexShrink: 0,
         display: 'flex',
         flexDirection: 'column',
@@ -33,7 +33,7 @@ export default function BoardColumn({ status, tasks, onAddTask, onTaskClick }: P
         border: '1px solid',
         borderColor: `${meta.accent}22`,
         overflow: 'hidden',
-        minHeight: 400,
+        minHeight: { xs: 320, sm: 400 },
       }}
     >
       <Stack
