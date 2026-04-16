@@ -248,21 +248,28 @@ export default function BoardPage() {
         >
           <Stack
             direction="row"
-            spacing={1.5}
             alignItems="center"
-            useFlexGap
-            sx={{ minWidth: 0, flexWrap: 'wrap', width: { xs: '100%', md: 'auto' } }}
+            justifyContent="space-between"
+            sx={{ width: '100%', minWidth: 0, gap: 2 }}
           >
-            <Typography variant="h6" fontWeight={800} color="primary">
-              TaskBoard
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-              <Chip label={`${total} total`} size="small" variant="outlined" />
-              <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
-              {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
+            <Stack
+              direction="row"
+              spacing={1.5}
+              alignItems="center"
+              useFlexGap
+              sx={{ minWidth: 0, flexWrap: 'wrap' }}
+            >
+              <Typography variant="h6" fontWeight={800} color="primary">
+                TaskBoard
+              </Typography>
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <Chip label={`${total} total`} size="small" variant="outlined" />
+                <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
+                {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
+              </Stack>
             </Stack>
-            <Box sx={{ flex: 1, minWidth: { xs: 0, sm: 32 } }} />
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, ml: { xs: 0, sm: 'auto' } }}>
+
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, flexShrink: 0 }}>
               <Box
                 aria-hidden="true"
                 sx={{
