@@ -47,6 +47,7 @@ import {
 } from '../services/teamsApi';
 
 const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'in_review', 'done'];
+const PROFILE_ANIMALS = ['🐶', '🐱', '🦊', '🐼', '🐸', '🐵', '🐻', '🐨'];
 
 function parseDueDate(dateValue: string | null): Date | null {
   if (!dateValue) return null;
@@ -54,6 +55,17 @@ function parseDueDate(dateValue: string | null): Date | null {
   const [year, month, day] = datePart.split('-').map(Number);
   if (!year || !month || !day) return null;
   return new Date(year, month - 1, day, 12, 0, 0, 0);
+}
+
+function getProfileAnimal(seed: string | null | undefined): string {
+  if (!seed) return PROFILE_ANIMALS[0];
+
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  return PROFILE_ANIMALS[Math.abs(hash) % PROFILE_ANIMALS.length];
 }
 
 export default function BoardPage() {
@@ -207,6 +219,7 @@ export default function BoardPage() {
     if (!dueDate) return false;
     return dueDate < new Date(new Date().toDateString());
   }).length;
+  const profileEmoji = getProfileAnimal(currentUser?.username ?? currentUser?.email ?? null);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', display: 'flex', flexDirection: 'column' }}>
@@ -226,9 +239,32 @@ export default function BoardPage() {
             alignItems={{ xs: 'flex-start', sm: 'center' }}
             sx={{ minWidth: 0 }}
           >
-            <Typography variant="h6" fontWeight={800} color="primary">
-              TaskBoard
-            </Typography>
+            <Stack direction="row" spacing={1.25} alignItems="center">
+              <Box
+                aria-hidden="true"
+                sx={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: '50%',
+                  display: 'grid',
+                  placeItems: 'center',
+                  bgcolor: '#e0f2fe',
+                  border: '1px solid #bae6fd',
+                  fontSize: 18,
+                  flexShrink: 0,
+                }}
+              >
+                {profileEmoji}
+              </Box>
+              <Typography
+                variant="body2"
+                fontWeight={700}
+                color="text.primary"
+                sx={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {currentUser?.username ?? 'TaskBoard'}
+              </Typography>
+            </Stack>
             <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
               <Chip label={`${total} total`} size="small" variant="outlined" />
               <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
