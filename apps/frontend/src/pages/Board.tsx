@@ -47,7 +47,7 @@ import {
 } from '../services/teamsApi';
 
 const COLUMNS: TaskStatus[] = ['todo', 'in_progress', 'in_review', 'done'];
-const PROFILE_ANIMALS = ['🐶', '🐱', '🦊', '🐼', '🐸', '🐵', '🐻', '🐨'];
+const PROFILE_ANIMALS = ['\u{1F436}', '\u{1F431}', '\u{1F98A}', '\u{1F43C}', '\u{1F438}', '\u{1F435}', '\u{1F43B}', '\u{1F428}'];
 
 function parseDueDate(dateValue: string | null): Date | null {
   if (!dateValue) return null;
@@ -66,6 +66,19 @@ function getProfileAnimal(seed: string | null | undefined): string {
   }
 
   return PROFILE_ANIMALS[Math.abs(hash) % PROFILE_ANIMALS.length];
+}
+
+function getLoadErrorMessage(error: unknown): string {
+  if (error instanceof TypeError) {
+    return 'Could not reach the server. If your Render backend was asleep, wait a few seconds and refresh.';
+  }
+
+  if (error instanceof Error) {
+    const message = error.message.trim();
+    return message.length > 0 ? message : 'Failed to load tasks';
+  }
+
+  return 'Failed to load tasks';
 }
 
 export default function BoardPage() {
@@ -111,8 +124,8 @@ export default function BoardPage() {
               .filter((user): user is AuthUser => Boolean(user))
               .filter((user, index, array) => array.findIndex(candidate => candidate.id === user.id) === index),
       );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load tasks');
+    } catch (error) {
+      setError(getLoadErrorMessage(error));
     } finally {
       setLoading(false);
     }
@@ -234,10 +247,11 @@ export default function BoardPage() {
           }}
         >
           <Stack
-            direction={{ xs: 'column', sm: 'row' }}
+            direction="row"
             spacing={1.5}
-            alignItems={{ xs: 'flex-start', sm: 'center' }}
-            sx={{ minWidth: 0, flexWrap: 'wrap' }}
+            alignItems="center"
+            useFlexGap
+            sx={{ minWidth: 0, flexWrap: 'wrap', width: { xs: '100%', md: 'auto' } }}
           >
             <Typography variant="h6" fontWeight={800} color="primary">
               TaskBoard
@@ -247,12 +261,8 @@ export default function BoardPage() {
               <Chip label={`${completed} done`} size="small" color="success" variant="outlined" />
               {overdue > 0 && <Chip label={`${overdue} overdue`} size="small" color="error" variant="outlined" />}
             </Stack>
-            <Stack
-              direction="row"
-              spacing={1}
-              alignItems="center"
-              sx={{ minWidth: 0 }}
-            >
+            <Box sx={{ flex: 1, minWidth: { xs: 0, sm: 32 } }} />
+            <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0, ml: { xs: 0, sm: 'auto' } }}>
               <Box
                 aria-hidden="true"
                 sx={{
@@ -275,7 +285,7 @@ export default function BoardPage() {
                 color="text.primary"
                 sx={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
               >
-                {currentUser?.username ?? 'TaskBoard'}
+                {currentUser?.username ?? currentUser?.email ?? 'Profile'}
               </Typography>
             </Stack>
           </Stack>
