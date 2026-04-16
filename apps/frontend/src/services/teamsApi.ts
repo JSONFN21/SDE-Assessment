@@ -1,8 +1,6 @@
-const BASE = (import.meta.env.VITE_API_BASE_URL as string | undefined)
-  ?.replace(/\/auth$/, '')
-  ?? '/api';
+import { API_BASE_URL } from './apiBase';
 
-const TEAMS_URL = `${BASE}/teams`;
+const TEAMS_URL = `${API_BASE_URL}/teams`;
 
 function authHeaders(): Record<string, string> {
   const token = localStorage.getItem('auth_token');

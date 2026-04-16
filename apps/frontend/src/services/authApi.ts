@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/auth';
+import { AUTH_API_BASE_URL } from './apiBase';
+
 const AUTH_ENDPOINTS = {
     login: "/login",
     register: "/register",
@@ -61,7 +62,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 
 
 export async function loginUser(payload: LoginInput): Promise<AuthSuccessResponse>{
-    const response = await fetch(API_BASE_URL+AUTH_ENDPOINTS.login, {
+    const response = await fetch(AUTH_API_BASE_URL+AUTH_ENDPOINTS.login, {
         method: "POST",
         headers:{
             "Content-Type": "application/json",
@@ -73,7 +74,7 @@ export async function loginUser(payload: LoginInput): Promise<AuthSuccessRespons
 
 
 export async function registerUser(payload: RegisterInput): Promise<AuthSuccessResponse>{
-    const response = await fetch(API_BASE_URL+AUTH_ENDPOINTS.register, {
+    const response = await fetch(AUTH_API_BASE_URL+AUTH_ENDPOINTS.register, {
         method: "POST",
         headers:{
             "Content-Type": "application/json",
@@ -85,7 +86,7 @@ export async function registerUser(payload: RegisterInput): Promise<AuthSuccessR
 
 
 export async function getMe(token: string): Promise<MeResponse>{
-    const response = await fetch(API_BASE_URL+AUTH_ENDPOINTS.me, {
+    const response = await fetch(AUTH_API_BASE_URL+AUTH_ENDPOINTS.me, {
         method: "GET",
         headers:{
             Authorization: "Bearer " + token,
@@ -95,7 +96,7 @@ export async function getMe(token: string): Promise<MeResponse>{
 }
 
 export async function getTeamMembers(token: string): Promise<TeamMembersResponse> {
-    const response = await fetch(API_BASE_URL + AUTH_ENDPOINTS.users, {
+    const response = await fetch(AUTH_API_BASE_URL + AUTH_ENDPOINTS.users, {
         method: "GET",
         headers: {
             Authorization: "Bearer " + token,
