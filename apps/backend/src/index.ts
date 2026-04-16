@@ -12,12 +12,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const DEV_ORIGIN_RE = /^http:\/\/(localhost|127\.0\.0\.1):(\d{2,5})$/;
+const configuredOrigins = (process.env.CORS_ORIGIN ?? '')
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(Boolean);
 
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser clients (no Origin) and local dev frontends.
-    if (!origin || DEV_ORIGIN_RE.test(origin)) {
+    const isConfiguredOrigin = typeof origin === 'string' && configuredOrigins.includes(origin);
+
+    // Allow non-browser clients (no Origin), local dev frontends, and configured deployed frontends.
+    if (!origin || DEV_ORIGIN_RE.test(origin) || isConfiguredOrigin) {
       callback(null, true);
       return;
     }
@@ -80,7 +86,7 @@ process.on('SIGINT', async () => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 export default app;
