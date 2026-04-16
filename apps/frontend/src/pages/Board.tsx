@@ -374,25 +374,6 @@ export default function BoardPage() {
             </Stack>
           </DragDropContext>
         )}
-        {!loading && !error && filtered.length === 0 && (
-          <Box
-            sx={{
-              mt: 2,
-              p: 3,
-              borderRadius: 3,
-              bgcolor: '#fff',
-              border: '1px dashed #cbd5e1',
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="h6" fontWeight={700} gutterBottom>
-              No tasks match this view yet
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Create a task, switch boards, or clear your search and label filters to see more work.
-            </Typography>
-          </Box>
-        )}
       </Box>
 
       <CreateTaskDialog
