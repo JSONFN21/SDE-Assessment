@@ -417,11 +417,17 @@ export default function BoardPage() {
           </Stack>
         ) : (
           <DragDropContext onDragEnd={handleDragEnd}>
-            <Stack
-              direction="row"
-              spacing={{ xs: 1.5, sm: 2.5 }}
-              alignItems="flex-start"
-              sx={{ minWidth: 'max-content', pb: 1 }}
+            <Box
+              sx={{
+                display: 'grid',
+                gap: { xs: 1.5, sm: 2.5 },
+                gridTemplateColumns: {
+                  xs: '1fr',
+                  sm: 'repeat(2, minmax(0, 1fr))',
+                  lg: 'repeat(4, minmax(0, 1fr))',
+                },
+                alignItems: 'start',
+              }}
             >
               {COLUMNS.map(column => (
                 <BoardColumn
@@ -432,7 +438,7 @@ export default function BoardPage() {
                   onTaskClick={task => setEditTask(task)}
                 />
               ))}
-            </Stack>
+            </Box>
           </DragDropContext>
         )}
       </Box>
